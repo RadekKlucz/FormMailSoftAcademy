@@ -1,47 +1,29 @@
 /**
- * Przykład bezpiecznego klienta API z autentykacją HMAC
- * Użyj tego kodu w swoim frontend jeśli chcesz dodać zabezpieczenia
+ * Przykład prostego klienta API z autentykacją
+ * SUPER ŁATWE W IMPLEMENTACJI!
  */
 
-class SecureAPIClient {
-    constructor(apiUrl, apiKey) {
+class SimpleSecureAPIClient {
+    constructor(apiUrl, apiKey = null) {
         this.apiUrl = apiUrl;
         this.apiKey = apiKey;
     }
 
-    // Generuje podpis HMAC dla danych
-    async generateSignature(data) {
-        const encoder = new TextEncoder();
-        const dataString = JSON.stringify(data);
-        const keyData = encoder.encode(this.apiKey);
-        const messageData = encoder.encode(dataString);
-
-        const cryptoKey = await crypto.subtle.importKey(
-            'raw',
-            keyData,
-            { name: 'HMAC', hash: 'SHA-256' },
-            false,
-            ['sign']
-        );
-
-        const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
-        return Array.from(new Uint8Array(signature))
-            .map(b => b.toString(16).padStart(2, '0'))
-            .join('');
-    }
-
-    // Wysyła zabezpieczone żądanie do API
-    async sendSecureRequest(endpoint, data) {
+    // Wysyła zabezpieczone żądanie z prostym API key
+    async sendRequest(endpoint, data) {
         try {
-            const signature = await this.generateSignature(data);
-            
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+
+            // Jeśli masz API key, dodaj go do headers
+            if (this.apiKey) {
+                headers['X-API-Key'] = this.apiKey;
+            }
+
             const response = await fetch(`${this.apiUrl}${endpoint}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': this.apiKey,
-                    'X-Signature': signature
-                },
+                headers: headers,
                 body: JSON.stringify(data)
             });
 
@@ -52,19 +34,30 @@ class SecureAPIClient {
 
             return await response.json();
         } catch (error) {
-            console.error('Secure API request failed:', error);
+            console.error('API request failed:', error);
             throw error;
         }
     }
 
-    // Wysyła formularz kontaktowy (zabezpieczony)
+    // Wysyła formularz kontaktowy
     async sendContactForm(formData) {
-        return this.sendSecureRequest('/api/contact', formData);
+        return this.sendRequest('/api/contact', formData);
     }
 
-    // Wysyła formularz rezerwacji (zabezpieczony)
+    // Wysyła formularz rezerwacji
     async sendReservationForm(formData) {
-        return this.sendSecureRequest('/api/reservation', formData);
+        return this.sendRequest('/api/reservation', formData);
+    }
+
+    // Sprawdza czy API wymaga autentykacji
+    async checkAuthRequirements() {
+        try {
+            const response = await fetch(`${this.apiUrl}/api/auth-info`);
+            return await response.json();
+        } catch (error) {
+            console.error('Auth check failed:', error);
+            return { authentication_required: false };
+        }
     }
 }
 

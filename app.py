@@ -46,43 +46,25 @@ form_validator = FormValidator()
 # Wygeneruj klucz: python -c "import secrets; print(secrets.token_hex(32))"
 API_SECRET_KEY = os.environ.get("API_SECRET_KEY", "dev-api-key-change-in-production")
 
-def verify_api_signature(request_data, signature):
-    """Verify HMAC signature for API security"""
-    if not signature:
-        return False
+def verify_simple_api_key(api_key):
+    """Simple API key verification - just check if it matches"""
+    # If no API key is set, allow all requests (backward compatibility)
+    if not API_SECRET_KEY or API_SECRET_KEY == "dev-api-key-change-in-production":
+        return True
     
-    try:
-        # Create expected signature
-        request_string = str(request_data).encode('utf-8')
-        expected_signature = hmac.new(
-            API_SECRET_KEY.encode('utf-8'),
-            request_string,
-            hashlib.sha256
-        ).hexdigest()
-        
-        # Compare signatures safely
-        return hmac.compare_digest(signature, expected_signature)
-    except Exception as e:
-        logger.error(f"Error verifying API signature: {str(e)}")
-        return False
+    # If API key is provided, it must match the secret
+    return api_key and hmac.compare_digest(api_key, API_SECRET_KEY)
 
-def generate_api_key():
-    """Generate new API key for client"""
-    return secrets.token_hex(32)
-
-@app.route('/api/generate-key', methods=['POST'])
-@limiter.limit("1 per hour")
-def generate_key():
-    """Generate API key for authenticated requests (protected endpoint)"""
-    # Simple authentication - in production use proper auth
-    auth_token = request.headers.get('Authorization')
-    if auth_token != f"Bearer {API_SECRET_KEY}":
-        return jsonify({'error': 'Unauthorized'}), 401
+@app.route('/api/auth-info', methods=['GET'])
+def auth_info():
+    """Return information about API authentication requirements"""
+    auth_required = API_SECRET_KEY and API_SECRET_KEY != "dev-api-key-change-in-production"
     
-    new_key = generate_api_key()
     return jsonify({
-        'api_key': new_key,
-        'usage': 'Include in X-API-Key header for authenticated requests'
+        'authentication_required': auth_required,
+        'method': 'simple_api_key',
+        'header': 'X-API-Key',
+        'message': 'Include your API key in X-API-Key header' if auth_required else 'No authentication required'
     }), 200
 
 @app.route('/')
@@ -105,13 +87,10 @@ def contact_form():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
 
-        # Optional API Key authentication (if provided)
+        # Simple API Key authentication (if required)
         api_key = request.headers.get('X-API-Key')
-        if api_key:
-            # If API key is provided, verify it
-            signature = request.headers.get('X-Signature')
-            if not verify_api_signature(data, signature):
-                return jsonify({'error': 'Invalid API signature'}), 401
+        if not verify_simple_api_key(api_key):
+            return jsonify({'error': 'Invalid or missing API key'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_contact_form(data)
@@ -146,13 +125,10 @@ def reservation_form():
         if not data:
             return jsonify({'error': 'No data provided'}), 400
 
-        # Optional API Key authentication (if provided)
+        # Simple API Key authentication (if required)
         api_key = request.headers.get('X-API-Key')
-        if api_key:
-            # If API key is provided, verify it
-            signature = request.headers.get('X-Signature')
-            if not verify_api_signature(data, signature):
-                return jsonify({'error': 'Invalid API signature'}), 401
+        if not verify_simple_api_key(api_key):
+            return jsonify({'error': 'Invalid or missing API key'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_reservation_form(data)
