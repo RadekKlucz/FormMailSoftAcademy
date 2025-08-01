@@ -1,9 +1,6 @@
 import os
 import logging
-import hashlib
-import hmac
-import secrets
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from flask_limiter import Limiter
@@ -18,11 +15,6 @@ logger = logging.getLogger(__name__)
 
 # Create Flask app
 app = Flask(__name__)
-
-# UWAGA: Ustaw SESSION_SECRET w zmiennych środowiskowych
-# To powinien być losowy, bezpieczny klucz dla szyfrowania sesji
-# Możesz wygenerować klucz używając: python -c "import secrets; print(secrets.token_hex(32))"
-app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure CORS
@@ -40,32 +32,6 @@ limiter = Limiter(
 # Initialize services
 email_service = EmailService()
 form_validator = FormValidator()
-
-# API Security Configuration
-# UWAGA: Ustaw API_SECRET_KEY w zmiennych środowiskowych jako długi, losowy klucz
-# Wygeneruj klucz: python -c "import secrets; print(secrets.token_hex(32))"
-API_SECRET_KEY = os.environ.get("API_SECRET_KEY", "dev-api-key-change-in-production")
-
-def verify_simple_api_key(api_key):
-    """Simple API key verification - just check if it matches"""
-    # If no API key is set, allow all requests (backward compatibility)
-    if not API_SECRET_KEY or API_SECRET_KEY == "dev-api-key-change-in-production":
-        return True
-    
-    # If API key is provided, it must match the secret
-    return api_key and hmac.compare_digest(api_key, API_SECRET_KEY)
-
-@app.route('/api/auth-info', methods=['GET'])
-def auth_info():
-    """Return information about API authentication requirements"""
-    auth_required = API_SECRET_KEY and API_SECRET_KEY != "dev-api-key-change-in-production"
-    
-    return jsonify({
-        'authentication_required': auth_required,
-        'method': 'simple_api_key',
-        'header': 'X-API-Key',
-        'message': 'Include your API key in X-API-Key header' if auth_required else 'No authentication required'
-    }), 200
 
 @app.route('/')
 def index():
@@ -86,11 +52,6 @@ def contact_form():
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No data provided'}), 400
-
-        # Simple API Key authentication (if required)
-        api_key = request.headers.get('X-API-Key')
-        if not verify_simple_api_key(api_key):
-            return jsonify({'error': 'Invalid or missing API key'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_contact_form(data)
@@ -124,11 +85,6 @@ def reservation_form():
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No data provided'}), 400
-
-        # Simple API Key authentication (if required)
-        api_key = request.headers.get('X-API-Key')
-        if not verify_simple_api_key(api_key):
-            return jsonify({'error': 'Invalid or missing API key'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_reservation_form(data)
