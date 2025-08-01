@@ -1,6 +1,7 @@
 import os
 import smtplib
 import logging
+import secrets
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formataddr
@@ -36,6 +37,12 @@ class EmailService:
         self.sender_password = os.getenv("GMAIL_APP_PASSWORD", "your-app-password") 
         self.recipient_email = os.getenv("RECIPIENT_EMAIL", self.sender_email)
         
+    def _generate_unique_id(self):
+        """Generate unique ID for email subject to prevent threading"""
+        timestamp = datetime.now().strftime("%m%d%H%M")  # MMDDHHMM format
+        random_part = secrets.token_hex(2).upper()  # 4-character hex
+        return f"{timestamp}{random_part}"  # e.g., 01211345A7B2
+        
     def test_connection(self):
         """Test SMTP connection"""
         try:
@@ -52,7 +59,8 @@ class EmailService:
         try:
             # Create message
             msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"Nowa wiadomość kontaktowa - {form_data['name']}"
+            unique_id = self._generate_unique_id()
+            msg['Subject'] = f"Nowa wiadomość kontaktowa - {form_data['name']} #{unique_id}"
             msg['From'] = formataddr(("Formularz Kontaktowy", self.sender_email))
             msg['To'] = self.recipient_email
             msg['Reply-To'] = form_data['email']
@@ -83,7 +91,8 @@ class EmailService:
         try:
             # Create message
             msg = MIMEMultipart('alternative')
-            msg['Subject'] = f"Nowa rezerwacja - {form_data['name']}"
+            unique_id = self._generate_unique_id()
+            msg['Subject'] = f"Nowa rezerwacja - {form_data['name']} #{unique_id}"
             msg['From'] = formataddr(("Formularz Rezerwacji", self.sender_email))
             msg['To'] = self.recipient_email
             msg['Reply-To'] = form_data['email']
