@@ -7,6 +7,8 @@ A Flask-based web service that provides a contact form API with email functional
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Deployment target: Netlify for frontend, separate backend hosting (Vercel/Railway recommended)
+Configuration approach: Environment variables with detailed setup instructions
 
 ## System Architecture
 

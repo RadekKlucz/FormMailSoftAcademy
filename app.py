@@ -15,11 +15,17 @@ logger = logging.getLogger(__name__)
 
 # Create Flask app
 app = Flask(__name__)
+
+# UWAGA: Ustaw SESSION_SECRET w zmiennych środowiskowych
+# To powinien być losowy, bezpieczny klucz dla szyfrowania sesji
+# Możesz wygenerować klucz używając: python -c "import secrets; print(secrets.token_hex(32))"
 app.secret_key = os.environ.get("SESSION_SECRET", "dev-secret-key-change-in-production")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 
 # Configure CORS
-CORS(app, origins=["*"])  # In production, specify exact domains
+# UWAGA: W produkcji zmień origins=["*"] na konkretne domeny
+# Przykład: origins=["https://twoja-strona.netlify.app", "https://twoja-domena.com"]
+CORS(app, origins=["*"])
 
 # Configure rate limiting
 limiter = Limiter(
