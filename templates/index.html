@@ -74,14 +74,18 @@
                             <p><strong>Wymagane pola:</strong></p>
                             <ul>
                                 <li><code>name</code> - Imię i nazwisko (string, 2-100 znaków)</li>
-                                <li><code>email</code> - Adres e-mail (string, format email)</li>
                                 <li><code>contact_method</code> - Preferowana metoda kontaktu ("email" lub "phone")</li>
+                            </ul>
+                            <p><strong>Warunkowo wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>email</code> - Adres e-mail (wymagany jeśli contact_method = "email")</li>
+                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
                             </ul>
                             <p><strong>Opcjonalne pola:</strong></p>
                             <ul>
-                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
                                 <li><code>message</code> - Wiadomość (string, max 2000 znaków)</li>
                             </ul>
+                            <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
                         </div>
 
                         <!-- Reservation Form Endpoint -->
@@ -97,15 +101,19 @@
                             <p><strong>Wymagane pola:</strong></p>
                             <ul>
                                 <li><code>name</code> - Imię i nazwisko (string, 2-100 znaków)</li>
-                                <li><code>email</code> - Adres e-mail (string, format email)</li>
                                 <li><code>contact_method</code> - Preferowana metoda kontaktu ("email" lub "phone")</li>
+                            </ul>
+                            <p><strong>Warunkowo wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>email</code> - Adres e-mail (wymagany jeśli contact_method = "email")</li>
+                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
                             </ul>
                             <p><strong>Opcjonalne pola:</strong></p>
                             <ul>
-                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
                                 <li><code>service</code> - Typ usługi (string, max 200 znaków)</li>
                                 <li><code>additional_info</code> - Dodatkowe informacje (string, max 2000 znaków)</li>
                             </ul>
+                            <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
                         </div>
 
                         <!-- Health Check Endpoint -->

@@ -30,10 +30,12 @@ Preferred communication style: Simple, everyday language.
 
 ### Input Validation & Security
 - **Custom validation layer** with sanitization for XSS prevention
-- Form-specific validators for contact forms with Polish localization
+- Form-specific validators for contact and reservation forms with Polish localization
+- Conditional field validation: email OR phone required based on contact method preference
 - Email format validation with RFC compliance
 - Phone number validation for Polish formats
 - HTML entity encoding for safe output
+- Ensures at least one contact method is always provided
 
 ### Frontend Components
 - **Bootstrap-based UI** with dark theme support

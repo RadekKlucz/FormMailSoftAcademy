@@ -33,18 +33,19 @@ class FormValidator:
         else:
             cleaned_data['contact_method'] = contact_method
         
-        # Validate email
+        # Validate email (required if contact_method is email)
         email = self._sanitize_email(data.get('email', ''))
-        if not email:
-            errors.append('Adres e-mail jest wymagany')
-        elif not self.email_pattern.match(email):
+        if contact_method == 'email' and not email:
+            errors.append('Adres e-mail jest wymagany gdy wybrano kontakt przez email')
+        elif email and not self.email_pattern.match(email):
             errors.append('Podaj prawidłowy adres e-mail')
-        elif len(email) > 254:
+        elif email and len(email) > 254:
             errors.append('Adres e-mail jest zbyt długi')
-        else:
+        
+        if email:
             cleaned_data['email'] = email
         
-        # Validate phone (optional, but required if contact_method is phone)
+        # Validate phone (required if contact_method is phone)
         phone = self._sanitize_string(data.get('phone', ''))
         if contact_method == 'phone' and not phone:
             errors.append('Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny')
@@ -55,6 +56,10 @@ class FormValidator:
         
         if phone:
             cleaned_data['phone'] = phone
+        
+        # Ensure at least one contact method is provided
+        if not email and not phone:
+            errors.append('Podaj przynajmniej jeden sposób kontaktu (email lub telefon)')
         
         # Validate message (optional)
         message = self._sanitize_text(data.get('message', ''))
@@ -95,18 +100,19 @@ class FormValidator:
         else:
             cleaned_data['contact_method'] = contact_method
         
-        # Validate email
+        # Validate email (required if contact_method is email)
         email = self._sanitize_email(data.get('email', ''))
-        if not email:
-            errors.append('Adres e-mail jest wymagany')
-        elif not self.email_pattern.match(email):
+        if contact_method == 'email' and not email:
+            errors.append('Adres e-mail jest wymagany gdy wybrano kontakt przez email')
+        elif email and not self.email_pattern.match(email):
             errors.append('Podaj prawidłowy adres e-mail')
-        elif len(email) > 254:
+        elif email and len(email) > 254:
             errors.append('Adres e-mail jest zbyt długi')
-        else:
+        
+        if email:
             cleaned_data['email'] = email
         
-        # Validate phone (optional, but required if contact_method is phone)
+        # Validate phone (required if contact_method is phone)
         phone = self._sanitize_string(data.get('phone', ''))
         if contact_method == 'phone' and not phone:
             errors.append('Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny')
@@ -117,6 +123,10 @@ class FormValidator:
         
         if phone:
             cleaned_data['phone'] = phone
+        
+        # Ensure at least one contact method is provided
+        if not email and not phone:
+            errors.append('Podaj przynajmniej jeden sposób kontaktu (email lub telefon)')
         
         # Validate service (optional for reservation)
         service = self._sanitize_string(data.get('service', ''))

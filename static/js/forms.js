@@ -63,13 +63,18 @@ document.getElementById('contactForm').addEventListener('submit', async function
         return;
     }
     
-    if (!formData.email) {
-        showStatus('contactStatus', 'Adres e-mail jest wymagany', 'error');
+    if (formData.contact_method === 'email' && !formData.email) {
+        showStatus('contactStatus', 'Adres e-mail jest wymagany gdy wybrano kontakt przez email', 'error');
         return;
     }
     
     if (formData.contact_method === 'phone' && !formData.phone) {
         showStatus('contactStatus', 'Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny', 'error');
+        return;
+    }
+    
+    if (!formData.email && !formData.phone) {
+        showStatus('contactStatus', 'Podaj przynajmniej jeden sposób kontaktu (email lub telefon)', 'error');
         return;
     }
     
@@ -101,13 +106,18 @@ document.getElementById('reservationForm').addEventListener('submit', async func
         return;
     }
     
-    if (!formData.email) {
-        showStatus('reservationStatus', 'Adres e-mail jest wymagany', 'error');
+    if (formData.contact_method === 'email' && !formData.email) {
+        showStatus('reservationStatus', 'Adres e-mail jest wymagany gdy wybrano kontakt przez email', 'error');
         return;
     }
     
     if (formData.contact_method === 'phone' && !formData.phone) {
         showStatus('reservationStatus', 'Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny', 'error');
+        return;
+    }
+    
+    if (!formData.email && !formData.phone) {
+        showStatus('reservationStatus', 'Podaj przynajmniej jeden sposób kontaktu (email lub telefon)', 'error');
         return;
     }
     
@@ -188,19 +198,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Dynamic phone field requirement based on contact method
+    // Dynamic field requirements based on contact method
     const contactMethodRadios = document.querySelectorAll('input[type="radio"][name*="contactMethod"], input[type="radio"][name*="ContactMethod"]');
     contactMethodRadios.forEach(radio => {
         radio.addEventListener('change', function() {
             const formPrefix = this.name.includes('reservation') ? 'reservation' : 'contact';
             const phoneField = document.getElementById(formPrefix + 'PhoneNum');
+            const emailField = document.getElementById(formPrefix + 'EmailAddr');
             
             if (this.value === 'phone') {
                 phoneField.required = true;
-                phoneField.parentElement.querySelector('.form-text').textContent = 'Wymagane dla wybranej metody kontaktu';
+                emailField.required = false;
+                phoneField.parentElement.querySelector('.form-text').textContent = 'Wymagane gdy wybierzesz kontakt telefoniczny';
+                emailField.parentElement.querySelector('.form-text').textContent = 'Opcjonalne';
             } else {
                 phoneField.required = false;
+                emailField.required = true;
                 phoneField.parentElement.querySelector('.form-text').textContent = 'Opcjonalne';
+                emailField.parentElement.querySelector('.form-text').textContent = 'Wymagane gdy wybierzesz kontakt przez email';
             }
         });
     });
