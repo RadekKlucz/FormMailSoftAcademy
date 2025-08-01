@@ -1,5 +1,8 @@
 import os
 import logging
+import hashlib
+import hmac
+import secrets
 from datetime import datetime, timedelta
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
@@ -38,6 +41,50 @@ limiter = Limiter(
 email_service = EmailService()
 form_validator = FormValidator()
 
+# API Security Configuration
+# UWAGA: Ustaw API_SECRET_KEY w zmiennych środowiskowych jako długi, losowy klucz
+# Wygeneruj klucz: python -c "import secrets; print(secrets.token_hex(32))"
+API_SECRET_KEY = os.environ.get("API_SECRET_KEY", "dev-api-key-change-in-production")
+
+def verify_api_signature(request_data, signature):
+    """Verify HMAC signature for API security"""
+    if not signature:
+        return False
+    
+    try:
+        # Create expected signature
+        request_string = str(request_data).encode('utf-8')
+        expected_signature = hmac.new(
+            API_SECRET_KEY.encode('utf-8'),
+            request_string,
+            hashlib.sha256
+        ).hexdigest()
+        
+        # Compare signatures safely
+        return hmac.compare_digest(signature, expected_signature)
+    except Exception as e:
+        logger.error(f"Error verifying API signature: {str(e)}")
+        return False
+
+def generate_api_key():
+    """Generate new API key for client"""
+    return secrets.token_hex(32)
+
+@app.route('/api/generate-key', methods=['POST'])
+@limiter.limit("1 per hour")
+def generate_key():
+    """Generate API key for authenticated requests (protected endpoint)"""
+    # Simple authentication - in production use proper auth
+    auth_token = request.headers.get('Authorization')
+    if auth_token != f"Bearer {API_SECRET_KEY}":
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    new_key = generate_api_key()
+    return jsonify({
+        'api_key': new_key,
+        'usage': 'Include in X-API-Key header for authenticated requests'
+    }), 200
+
 @app.route('/')
 def index():
     """Main page with form documentation"""
@@ -57,6 +104,14 @@ def contact_form():
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No data provided'}), 400
+
+        # Optional API Key authentication (if provided)
+        api_key = request.headers.get('X-API-Key')
+        if api_key:
+            # If API key is provided, verify it
+            signature = request.headers.get('X-Signature')
+            if not verify_api_signature(data, signature):
+                return jsonify({'error': 'Invalid API signature'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_contact_form(data)
@@ -90,6 +145,14 @@ def reservation_form():
         data = request.get_json()
         if not data:
             return jsonify({'error': 'No data provided'}), 400
+
+        # Optional API Key authentication (if provided)
+        api_key = request.headers.get('X-API-Key')
+        if api_key:
+            # If API key is provided, verify it
+            signature = request.headers.get('X-Signature')
+            if not verify_api_signature(data, signature):
+                return jsonify({'error': 'Invalid API signature'}), 401
 
         # Validate form data
         validation_result = form_validator.validate_reservation_form(data)

@@ -26,6 +26,16 @@ GMAIL_EMAIL=twoja-firma@gmail.com
 GMAIL_APP_PASSWORD=abcd efgh ijkl mnop  
 RECIPIENT_EMAIL=kontakt@twoja-firma.com
 SESSION_SECRET=wygenerowany-losowy-klucz-64-znaki
+API_SECRET_KEY=wygenerowany-api-klucz-64-znaki
+```
+
+**Generowanie kluczy:**
+```bash
+# SESSION_SECRET
+python -c "import secrets; print(secrets.token_hex(32))"
+
+# API_SECRET_KEY (opcjonalne - dla dodatkowych zabezpieczeń)
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
 **Generowanie SESSION_SECRET:**
