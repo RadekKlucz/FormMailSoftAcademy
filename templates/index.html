@@ -84,6 +84,7 @@
                             <p><strong>Opcjonalne pola:</strong></p>
                             <ul>
                                 <li><code>message</code> - Wiadomość (string, max 2000 znaków)</li>
+                                <li><code>language</code> - Język kontaktu ("pl" lub "en", domyślnie "pl")</li>
                             </ul>
                             <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
                         </div>
@@ -112,6 +113,7 @@
                             <ul>
                                 <li><code>service</code> - Typ usługi (string, max 200 znaków)</li>
                                 <li><code>additional_info</code> - Dodatkowe informacje (string, max 2000 znaków)</li>
+                                <li><code>language</code> - Język kontaktu ("pl" lub "en", domyślnie "pl")</li>
                             </ul>
                             <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
                         </div>
@@ -147,7 +149,8 @@
     email: "jan@example.com",
     contact_method: "email",
     phone: "+48 123 456 789",
-    message: "Witam, chciałbym uzyskać więcej informacji..."
+    message: "Witam, chciałbym uzyskać więcej informacji...",
+    language: "pl"
 };
 
 fetch('/api/contact', {

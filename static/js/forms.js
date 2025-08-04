@@ -54,7 +54,8 @@ document.getElementById('contactForm').addEventListener('submit', async function
         email: document.getElementById('contactEmailAddr').value.trim(),
         contact_method: document.querySelector('input[name="contactMethod"]:checked').value,
         phone: document.getElementById('contactPhoneNum').value.trim(),
-        message: document.getElementById('contactMessage').value.trim()
+        message: document.getElementById('contactMessage').value.trim(),
+        language: document.getElementById('contactLanguage').value || 'pl'
     };
     
     // Client-side validation
@@ -97,7 +98,8 @@ document.getElementById('reservationForm').addEventListener('submit', async func
         contact_method: document.querySelector('input[name="reservationContactMethod"]:checked').value,
         phone: document.getElementById('reservationPhoneNum').value.trim(),
         service: document.getElementById('reservationService').value,
-        additional_info: document.getElementById('reservationInfo').value.trim()
+        additional_info: document.getElementById('reservationInfo').value.trim(),
+        language: document.getElementById('reservationLanguage').value || 'pl'
     };
     
     // Client-side validation
