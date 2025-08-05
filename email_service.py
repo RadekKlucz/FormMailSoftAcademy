@@ -7,6 +7,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formataddr
 from datetime import datetime
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +103,7 @@ class EmailService:
             msg['Subject'] = subject
             msg['From'] = formataddr((labels.get('form_name', 'Contact Form'), self.sender_email))
             msg['To'] = self.recipient_email
-            msg['Reply-To'] = form_data['email']
+            msg['Reply-To'] = form_data.get('email', self.sender_email) # Use sender_email if email is empty
 
             # Create email body
             html_body = self._create_email_html(form_data, 'contact')
@@ -140,7 +141,7 @@ class EmailService:
             msg['Subject'] = subject
             msg['From'] = formataddr((labels.get('form_name', 'Reservation Form'), self.sender_email))
             msg['To'] = self.recipient_email
-            msg['Reply-To'] = form_data['email']
+            msg['Reply-To'] = form_data.get('email', self.sender_email) # Use sender_email if email is empty
 
             # Create email body
             html_body = self._create_email_html(form_data, 'reservation')
@@ -168,9 +169,17 @@ class EmailService:
         language = data.get('language', 'pl')
         labels = self._get_labels(language, form_type)
 
-        preferred_contact = labels.get('contact_email', 'Email') if data['contact_method'] == 'email' else labels.get('contact_phone', 'Phone')
+        preferred_contact = labels.get('contact_email', 'Email') if data.get('contact_method') == 'email' else labels.get('contact_phone', 'Phone')
         contact_lang_display = labels.get('lang_en', 'English') if language == 'en' else labels.get('lang_pl', 'Polish')
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+        # Handle empty fields gracefully for display
+        email_value = data.get('email', '').strip()
+        phone_value = data.get('phone', '').strip()
+        message_value = data.get('message', '').strip() if form_type == 'contact' else None
+        service_value = data.get('service', '').strip() if form_type == 'reservation' else None
+        additional_info_value = data.get('additional_info', '').strip() if form_type == 'reservation' else None
+
 
         # Base HTML template
         html_header = f"""
@@ -213,40 +222,40 @@ class EmailService:
 
                 <div class="field">
                     <div class="label">{labels.get('email', 'Email')}:</div>
-                    <div class="value">{data['email']}</div>
+                    <div class="value">{email_value if email_value else labels.get('not_provided', 'N/A')}</div>
                 </div>
         """
 
         # Add phone field if present
-        if data.get('phone'):
+        if phone_value:
             html_header += f"""
                 <div class="field">
                     <div class="label">{labels.get('phone', 'Phone')}:</div>
-                    <div class="value">{data['phone']}</div>
+                    <div class="value">{phone_value}</div>
                 </div>
             """
 
         # Add form-specific fields
-        if form_type == 'contact' and data.get('message'):
+        if form_type == 'contact' and (message_value or not labels.get('message_optional', True)): # Show message if it exists or is not optional
             html_header += f"""
                 <div class="field">
                     <div class="label">{labels.get('message', 'Message')}:</div>
-                    <div class="value">{data['message'].replace(chr(10), '<br>')}</div>
+                    <div class="value">{message_value.replace(chr(10), '<br>') if message_value else labels.get('not_provided', 'N/A')}</div>
                 </div>
             """
         elif form_type == 'reservation':
-            if data.get('service'):
+            if service_value:
                 html_header += f"""
                 <div class="field">
                     <div class="label">{labels.get('service', 'Service')}:</div>
-                    <div class="value">{data['service']}</div>
+                    <div class="value">{service_value}</div>
                 </div>
                 """
-            if data.get('additional_info'):
+            if additional_info_value:
                 html_header += f"""
                 <div class="field">
                     <div class="label">{labels.get('additional_info', 'Additional info')}:</div>
-                    <div class="value">{data['additional_info'].replace(chr(10), '<br>')}</div>
+                    <div class="value">{additional_info_value.replace(chr(10), '<br>')}</div>
                 </div>
                 """
 
@@ -278,9 +287,17 @@ class EmailService:
         language = data.get('language', 'pl')
         labels = self._get_labels(language, form_type)
 
-        preferred_contact = labels.get('contact_email', 'Email') if data['contact_method'] == 'email' else labels.get('contact_phone', 'Phone')
+        preferred_contact = labels.get('contact_email', 'Email') if data.get('contact_method') == 'email' else labels.get('contact_phone', 'Phone')
         contact_lang_display = labels.get('lang_en', 'English') if language == 'en' else labels.get('lang_pl', 'Polish')
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+
+        # Handle empty fields gracefully for display
+        email_value = data.get('email', '').strip()
+        phone_value = data.get('phone', '').strip()
+        message_value = data.get('message', '').strip() if form_type == 'contact' else None
+        service_value = data.get('service', '').strip() if form_type == 'reservation' else None
+        additional_info_value = data.get('additional_info', '').strip() if form_type == 'reservation' else None
+
 
         text = f"""
 {labels.get('title', 'NEW MESSAGE').upper()}
@@ -289,20 +306,20 @@ class EmailService:
 {labels.get('name', 'Name')}: {data['name']}
 {labels.get('contact_method', 'Contact method')}: {preferred_contact}
 {labels.get('contact_language', 'Language')}: {contact_lang_display}
-{labels.get('email', 'Email')}: {data['email']}
+{labels.get('email', 'Email')}: {email_value if email_value else labels.get('not_provided', 'N/A')}
 """
 
-        if data.get('phone'):
-            text += f"{labels.get('phone', 'Phone')}: {data['phone']}\n"
+        if phone_value:
+            text += f"{labels.get('phone', 'Phone')}: {phone_value}\n"
 
         # Add form-specific fields
-        if form_type == 'contact' and data.get('message'):
-            text += f"\n{labels.get('message', 'Message')}:\n{data['message']}\n"
+        if form_type == 'contact' and (message_value or not labels.get('message_optional', True)): # Show message if it exists or is not optional
+            text += f"\n{labels.get('message', 'Message')}:\n{message_value if message_value else labels.get('not_provided', 'N/A')}\n"
         elif form_type == 'reservation':
-            if data.get('service'):
-                text += f"{labels.get('service', 'Service')}: {data['service']}\n"
-            if data.get('additional_info'):
-                text += f"\n{labels.get('additional_info', 'Additional info')}:\n{data['additional_info']}\n"
+            if service_value:
+                text += f"{labels.get('service', 'Service')}: {service_value}\n"
+            if additional_info_value:
+                text += f"\n{labels.get('additional_info', 'Additional info')}:\n{additional_info_value}\n"
 
         # Footer
         if form_type == 'reservation':

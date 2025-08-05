@@ -69,8 +69,8 @@ class FormValidator:
         if message and len(message) > 2000:
             errors.append('Wiadomość jest zbyt długa (maksimum 2000 znaków)')
 
-        if message:
-            cleaned_data['message'] = message
+        # Always include message in cleaned data, even if empty
+        cleaned_data['message'] = message if message else ''
 
         # Check for suspicious content
         if self._detect_spam(data):
@@ -139,16 +139,16 @@ class FormValidator:
         if service and len(service) > 200:
             errors.append('Nazwa usługi jest zbyt długa')
 
-        if service:
-            cleaned_data['service'] = service
+        # Always include service in cleaned data, even if empty
+        cleaned_data['service'] = service if service else ''
 
-        # Validate additional info (optional)
+        # Validate additional info (optional) - this is the message field for reservations
         additional_info = self._sanitize_text(data.get('additional_info', ''))
         if additional_info and len(additional_info) > 2000:
             errors.append('Dodatkowe informacje są zbyt długie (maksimum 2000 znaków)')
 
-        if additional_info:
-            cleaned_data['additional_info'] = additional_info
+        # Always include additional_info in cleaned data, even if empty
+        cleaned_data['additional_info'] = additional_info if additional_info else ''
 
         # Check for suspicious content
         if self._detect_spam(data):

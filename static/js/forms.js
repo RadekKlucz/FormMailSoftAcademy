@@ -64,13 +64,8 @@ document.getElementById('contactForm').addEventListener('submit', async function
         return;
     }
     
-    if (formData.contact_method === 'email' && !formData.email) {
-        showStatus('contactStatus', 'Adres e-mail jest wymagany gdy wybrano kontakt przez email', 'error');
-        return;
-    }
-    
-    if (formData.contact_method === 'phone' && !formData.phone) {
-        showStatus('contactStatus', 'Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny', 'error');
+    if (!formData.email && !formData.phone) {
+        showStatus('contactStatus', 'Podaj przynajmniej jeden sposób kontaktu (email lub telefon)', 'error');
         return;
     }
     
@@ -105,16 +100,6 @@ document.getElementById('reservationForm').addEventListener('submit', async func
     // Client-side validation
     if (!formData.name || formData.name.length < 2) {
         showStatus('reservationStatus', 'Imię jest wymagane (minimum 2 znaki)', 'error');
-        return;
-    }
-    
-    if (formData.contact_method === 'email' && !formData.email) {
-        showStatus('reservationStatus', 'Adres e-mail jest wymagany gdy wybrano kontakt przez email', 'error');
-        return;
-    }
-    
-    if (formData.contact_method === 'phone' && !formData.phone) {
-        showStatus('reservationStatus', 'Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny', 'error');
         return;
     }
     
