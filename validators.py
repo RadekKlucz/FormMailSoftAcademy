@@ -9,8 +9,8 @@ class FormValidator:
     def __init__(self):
         # Email regex pattern
         self.email_pattern = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-        # Phone regex pattern (Polish format)
-        self.phone_pattern = re.compile(r'^(\+48\s?)?[\d\s\-\(\)]{7,15}$')
+        # Phone regex pattern (global format: +country code followed by digits, spaces, hyphens, or parentheses, 7 to 15 digits total)
+        self.phone_pattern = re.compile(r'^(\+|00)[1-9][0-9]{6,14}$')
 
     def validate_contact_form(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Validate contact form data"""
@@ -40,11 +40,9 @@ class FormValidator:
         else:
             cleaned_data['language'] = language
 
-        # Validate email (required if contact_method is email)
+        # Validate email (optional but must be valid if provided)
         email = self._sanitize_email(data.get('email', ''))
-        if contact_method == 'email' and not email:
-            errors.append('Adres e-mail jest wymagany gdy wybrano kontakt przez email')
-        elif email and not self.email_pattern.match(email):
+        if email and not self.email_pattern.match(email):
             errors.append('Podaj prawidłowy adres e-mail')
         elif email and len(email) > 254:
             errors.append('Adres e-mail jest zbyt długi')
@@ -52,12 +50,10 @@ class FormValidator:
         if email:
             cleaned_data['email'] = email
 
-        # Validate phone (required if contact_method is phone)
+        # Validate phone (optional but must be valid if provided)
         phone = self._sanitize_string(data.get('phone', ''))
-        if contact_method == 'phone' and not phone:
-            errors.append('Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny')
-        elif phone and not self.phone_pattern.match(phone):
-            errors.append('Podaj prawidłowy numer telefonu')
+        if phone and not self.phone_pattern.match(phone):
+            errors.append('Podaj prawidłowy numer telefonu (format: +kod_kraju numer)')
         elif phone and len(phone) > 20:
             errors.append('Numer telefonu jest zbyt długi')
 
@@ -114,11 +110,9 @@ class FormValidator:
         else:
             cleaned_data['language'] = language
 
-        # Validate email (required if contact_method is email)
+        # Validate email (optional but must be valid if provided)
         email = self._sanitize_email(data.get('email', ''))
-        if contact_method == 'email' and not email:
-            errors.append('Adres e-mail jest wymagany gdy wybrano kontakt przez email')
-        elif email and not self.email_pattern.match(email):
+        if email and not self.email_pattern.match(email):
             errors.append('Podaj prawidłowy adres e-mail')
         elif email and len(email) > 254:
             errors.append('Adres e-mail jest zbyt długi')
@@ -126,12 +120,10 @@ class FormValidator:
         if email:
             cleaned_data['email'] = email
 
-        # Validate phone (required if contact_method is phone)
+        # Validate phone (optional but must be valid if provided)
         phone = self._sanitize_string(data.get('phone', ''))
-        if contact_method == 'phone' and not phone:
-            errors.append('Numer telefonu jest wymagany gdy wybrano kontakt telefoniczny')
-        elif phone and not self.phone_pattern.match(phone):
-            errors.append('Podaj prawidłowy numer telefonu')
+        if phone and not self.phone_pattern.match(phone):
+            errors.append('Podaj prawidłowy numer telefonu (format: +kod_kraju numer)')
         elif phone and len(phone) > 20:
             errors.append('Numer telefonu jest zbyt długi')
 

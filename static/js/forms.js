@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneInputs = document.querySelectorAll('input[type="tel"]');
     phoneInputs.forEach(input => {
         input.addEventListener('blur', function() {
-            const phonePattern = /^(\+48\s?)?[\d\s\-\(\)]{7,15}$/;
+            const phonePattern = /^(\+|00)[1-9][0-9]{6,14}$/;
             if (this.value && !phonePattern.test(this.value)) {
                 this.classList.add('is-invalid');
             } else {
