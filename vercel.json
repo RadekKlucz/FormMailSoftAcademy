@@ -11,11 +11,5 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ],
-  "env": {
-    "GMAIL_EMAIL": "@gmail_email",
-    "GMAIL_APP_PASSWORD": "@gmail_app_password", 
-    "RECIPIENT_EMAIL": "@recipient_email",
-    "SESSION_SECRET": "@session_secret"
-  }
+  ]
 }
