@@ -103,7 +103,9 @@ class EmailService:
             msg['Subject'] = subject
             msg['From'] = formataddr((labels.get('form_name', 'Contact Form'), self.sender_email))
             msg['To'] = self.recipient_email
-            msg['Reply-To'] = form_data.get('email', self.sender_email) # Use sender_email if email is empty
+            # Set Reply-To to email if provided, otherwise use sender_email
+            reply_to_email = form_data.get('email', '').strip()
+            msg['Reply-To'] = reply_to_email if reply_to_email else self.sender_email
 
             # Create email body
             html_body = self._create_email_html(form_data, 'contact')
@@ -141,7 +143,9 @@ class EmailService:
             msg['Subject'] = subject
             msg['From'] = formataddr((labels.get('form_name', 'Reservation Form'), self.sender_email))
             msg['To'] = self.recipient_email
-            msg['Reply-To'] = form_data.get('email', self.sender_email) # Use sender_email if email is empty
+            # Set Reply-To to email if provided, otherwise use sender_email
+            reply_to_email = form_data.get('email', '').strip()
+            msg['Reply-To'] = reply_to_email if reply_to_email else self.sender_email
 
             # Create email body
             html_body = self._create_email_html(form_data, 'reservation')
