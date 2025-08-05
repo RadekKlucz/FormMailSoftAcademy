@@ -13,27 +13,9 @@ logger = logging.getLogger(__name__)
 
 class EmailService:
     def __init__(self):
-        # Konfiguracja serwera SMTP Gmail
+        #  SMTP Gmail Server
         self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587
-
-        # UWAGA: Skonfiguruj te zmienne środowiskowe w swoim środowisku hostingowym:
-        # 
-        # GMAIL_EMAIL - Twój adres Gmail (np. "twoja-firma@gmail.com")
-        # Aby uzyskać ten adres:
-        # 1. Utwórz lub użyj istniejącego konta Gmail
-        # 2. Ustaw ten adres jako nadawcę wiadomości
-
-        # GMAIL_APP_PASSWORD - Hasło aplikacji Gmail (NIE zwykłe hasło!)
-        # Aby uzyskać hasło aplikacji:
-        # 1. Przejdź do https://myaccount.google.com/security
-        # 2. Włącz uwierzytelnianie dwuetapowe jeśli nie jest włączone
-        # 3. Przejdź do "Hasła aplikacji" (App Passwords)
-        # 4. Wygeneruj nowe hasło dla "Mail"
-        # 5. Użyj wygenerowanego 16-znakowego kodu (bez spacji)
-
-        # RECIPIENT_EMAIL - Adres, na który będą wysyłane formularze (np. "kontakt@twoja-firma.com")
-        # To może być ten sam adres co GMAIL_EMAIL lub inny
 
         self.sender_email = os.getenv("GMAIL_EMAIL", "your-email@gmail.com")
         self.sender_password = os.getenv("GMAIL_APP_PASSWORD", "your-app-password") 
