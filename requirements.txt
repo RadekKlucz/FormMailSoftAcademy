@@ -1,0 +1,9 @@
+# Backend API Formularzy - Zależności dla produkcji
+# Skopiuj zawartość tego pliku do requirements.txt na swojej platformie hostingowej
+
+Flask==2.3.3
+gunicorn==21.2.0
+Flask-CORS==4.0.0
+Flask-Limiter==3.5.0
+email-validator==2.0.0
+Werkzeug==2.3.7

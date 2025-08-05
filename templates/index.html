@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pl" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Formularzy - Dokumentacja</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Header -->
+                <div class="text-center mb-5">
+                    <h1 class="display-4 mb-3">
+                        <i class="fas fa-envelope-open-text me-3"></i>
+                        API Formularzy
+                    </h1>
+                    <p class="lead">Backend API do obsługi formularzy kontaktowych i rezerwacyjnych</p>
+                </div>
+
+                <!-- Status Cards -->
+                <div class="row mb-5">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-server fs-1 text-info mb-3"></i>
+                                <h5 class="card-title">Status API</h5>
+                                <span class="badge bg-success">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shield-alt fs-1 text-warning mb-3"></i>
+                                <h5 class="card-title">Ochrona</h5>
+                                <span class="badge bg-info">Rate Limiting</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-envelope fs-1 text-success mb-3"></i>
+                                <h5 class="card-title">Email</h5>
+                                <span class="badge bg-success">Gmail SMTP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endpoints Documentation -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-code me-2"></i>
+                            Dostępne Endpointy
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        
+                        <!-- Contact Form Endpoint -->
+                        <div class="mb-4">
+                            <h5 class="text-info">
+                                <i class="fas fa-comments me-2"></i>
+                                Formularz Kontaktowy
+                            </h5>
+                            <div class="bg-dark p-3 rounded mb-3">
+                                <code class="text-warning">POST /api/contact</code>
+                            </div>
+                            <p><strong>Limit:</strong> 5 żądań na minutę</p>
+                            <p><strong>Wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>name</code> - Imię i nazwisko (string, 2-100 znaków)</li>
+                                <li><code>contact_method</code> - Preferowana metoda kontaktu ("email" lub "phone")</li>
+                            </ul>
+                            <p><strong>Warunkowo wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>email</code> - Adres e-mail (wymagany jeśli contact_method = "email")</li>
+                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
+                            </ul>
+                            <p><strong>Opcjonalne pola:</strong></p>
+                            <ul>
+                                <li><code>message</code> - Wiadomość (string, max 2000 znaków)</li>
+                                <li><code>language</code> - Język kontaktu ("pl" lub "en", domyślnie "pl")</li>
+                            </ul>
+                            <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
+                        </div>
+
+                        <!-- Reservation Form Endpoint -->
+                        <div class="mb-4">
+                            <h5 class="text-success">
+                                <i class="fas fa-calendar-check me-2"></i>
+                                Formularz Rezerwacyjny
+                            </h5>
+                            <div class="bg-dark p-3 rounded mb-3">
+                                <code class="text-warning">POST /api/reservation</code>
+                            </div>
+                            <p><strong>Limit:</strong> 3 żądania na minutę</p>
+                            <p><strong>Wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>name</code> - Imię i nazwisko (string, 2-100 znaków)</li>
+                                <li><code>contact_method</code> - Preferowana metoda kontaktu ("email" lub "phone")</li>
+                            </ul>
+                            <p><strong>Warunkowo wymagane pola:</strong></p>
+                            <ul>
+                                <li><code>email</code> - Adres e-mail (wymagany jeśli contact_method = "email")</li>
+                                <li><code>phone</code> - Numer telefonu (wymagany jeśli contact_method = "phone")</li>
+                            </ul>
+                            <p><strong>Opcjonalne pola:</strong></p>
+                            <ul>
+                                <li><code>service</code> - Typ usługi (string, max 200 znaków)</li>
+                                <li><code>additional_info</code> - Dodatkowe informacje (string, max 2000 znaków)</li>
+                                <li><code>language</code> - Język kontaktu ("pl" lub "en", domyślnie "pl")</li>
+                            </ul>
+                            <p><em>Uwaga: Przynajmniej jeden sposób kontaktu (email lub telefon) musi być podany.</em></p>
+                        </div>
+
+                        <!-- Health Check Endpoint -->
+                        <div class="mb-4">
+                            <h5 class="text-secondary">
+                                <i class="fas fa-heartbeat me-2"></i>
+                                Health Check
+                            </h5>
+                            <div class="bg-dark p-3 rounded mb-3">
+                                <code class="text-warning">GET /api/health</code>
+                            </div>
+                            <p>Sprawdza status API i połączenia z serwerem email.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Example Request -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-file-code me-2"></i>
+                            Przykładowe Żądanie
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <h5>JavaScript (Fetch API)</h5>
+                        <div class="bg-dark p-3 rounded">
+                            <pre><code class="text-light">const formData = {
+    name: "Jan Kowalski",
+    email: "jan@example.com",
+    contact_method: "email",
+    phone: "+48 123 456 789",
+    message: "Witam, chciałbym uzyskać więcej informacji...",
+    language: "pl"
+};
+
+fetch('/api/contact', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(formData)
+})
+.then(response => response.json())
+.then(data => {
+    if (data.message) {
+        console.log('Sukces:', data.message);
+    } else {
+        console.error('Błąd:', data.error);
+    }
+})
+.catch(error => {
+    console.error('Błąd sieci:', error);
+});</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Features -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h3 class="mb-0">
+                            <i class="fas fa-shield-alt me-2"></i>
+                            Funkcje Bezpieczeństwa
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-check-circle text-success me-2"></i>Walidacja Danych</h5>
+                                <ul>
+                                    <li>Sprawdzanie formatów email i telefonu</li>
+                                    <li>Ograniczenia długości pól</li>
+                                    <li>Sanityzacja HTML</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-clock text-warning me-2"></i>Rate Limiting</h5>
+                                <ul>
+                                    <li>Ograniczenia per IP</li>
+                                    <li>Różne limity dla różnych formularzy</li>
+                                    <li>Automatyczne resetowanie</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-robot text-danger me-2"></i>Ochrona przed Spamem</h5>
+                                <ul>
+                                    <li>Detekcja słów kluczowych</li>
+                                    <li>Analiza zawartości</li>
+                                    <li>Honeypot fields</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5><i class="fas fa-globe text-info me-2"></i>CORS</h5>
+                                <ul>
+                                    <li>Konfigurowalny dostęp domenowy</li>
+                                    <li>Bezpieczne nagłówki</li>
+                                    <li>Obsługa preflight requests</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Test Link -->
+                <div class="text-center mb-5">
+                    <a href="/test" class="btn btn-lg btn-primary">
+                        <i class="fas fa-vial me-2"></i>
+                        Przetestuj Formularze
+                    </a>
+                </div>
+
+                <!-- Footer -->
+                <div class="text-center text-muted">
+                    <p>
+                        <i class="fas fa-server me-2"></i>
+                        API Formularzy - Bezpieczne przekazywanie wiadomości do Gmail
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

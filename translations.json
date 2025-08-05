@@ -1,0 +1,75 @@
+
+{
+  "pl": {
+    "contact": {
+      "form_name": "Formularz Kontaktowy",
+      "title": "Nowa wiadomość kontaktowa",
+      "received": "Otrzymano",
+      "name": "Imię i nazwisko",
+      "contact_method": "Preferowana metoda kontaktu",
+      "contact_language": "Język kontaktu",
+      "email": "Adres e-mail",
+      "phone": "Numer telefonu",
+      "message": "Wiadomość",
+      "footer": "Ta wiadomość została wysłana automatycznie z formularza kontaktowego na stronie internetowej.",
+      "contact_email": "E-mail",
+      "contact_phone": "Telefon",
+      "lang_pl": "Polski",
+      "lang_en": "English"
+    },
+    "reservation": {
+      "form_name": "Formularz Rezerwacji",
+      "title": "Nowa rezerwacja",
+      "received": "Otrzymano",
+      "name": "Imię i nazwisko",
+      "contact_method": "Preferowana metoda kontaktu",
+      "contact_language": "Język kontaktu",
+      "email": "Adres e-mail",
+      "phone": "Numer telefonu",
+      "service": "Usługa",
+      "additional_info": "Dodatkowe informacje",
+      "footer1": "Ta rezerwacja została wysłana automatycznie z formularza rezerwacyjnego na stronie internetowej.",
+      "footer2": "Pamiętaj o potwierdzeniu rezerwacji!",
+      "contact_email": "E-mail",
+      "contact_phone": "Telefon",
+      "lang_pl": "Polski",
+      "lang_en": "English"
+    }
+  },
+  "en": {
+    "contact": {
+      "form_name": "Contact Form",
+      "title": "New contact message",
+      "received": "Received",
+      "name": "Name",
+      "contact_method": "Preferred contact method",
+      "contact_language": "Contact language",
+      "email": "Email address",
+      "phone": "Phone number",
+      "message": "Message",
+      "footer": "This message was sent automatically from the contact form on the website.",
+      "contact_email": "Email",
+      "contact_phone": "Phone",
+      "lang_pl": "Polish",
+      "lang_en": "English"
+    },
+    "reservation": {
+      "form_name": "Reservation Form",
+      "title": "New reservation",
+      "received": "Received",
+      "name": "Name",
+      "contact_method": "Preferred contact method",
+      "contact_language": "Contact language",
+      "email": "Email address",
+      "phone": "Phone number",
+      "service": "Service",
+      "additional_info": "Additional information",
+      "footer1": "This reservation was sent automatically from the reservation form on the website.",
+      "footer2": "Remember to confirm the reservation!",
+      "contact_email": "Email",
+      "contact_phone": "Phone",
+      "lang_pl": "Polish",
+      "lang_en": "English"
+    }
+  }
+}
